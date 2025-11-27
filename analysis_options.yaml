@@ -1,0 +1,14 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+linter:
+  rules:
+    public_member_api_docs: false # 個人開発等の場合、全てのpublicメンバへのドキュメント強制は一旦無効化しても良い
+    lines_longer_than_80_chars: false # 現代のディスプレイ幅に合わせて緩和
+
+analyzer:
+  exclude:
+    - "**/*.g.dart" # 自動生成ファイルを除外
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+  errors:
+    invalid_annotation_target: ignore # Freezed等のアノテーション用
