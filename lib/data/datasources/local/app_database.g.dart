@@ -451,6 +451,15 @@ class $TransactionsTable extends Transactions
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -461,6 +470,7 @@ class $TransactionsTable extends Transactions
     emotionalScore,
     emotionalTag,
     investmentFlag,
+    note,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -537,6 +547,12 @@ class $TransactionsTable extends Transactions
         ),
       );
     }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
     return context;
   }
 
@@ -578,6 +594,10 @@ class $TransactionsTable extends Transactions
         DriftSqlType.bool,
         data['${effectivePrefix}investment_flag'],
       )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
     );
   }
 
@@ -596,6 +616,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final int emotionalScore;
   final String? emotionalTag;
   final bool investmentFlag;
+  final String? note;
   const Transaction({
     required this.id,
     required this.accountId,
@@ -605,6 +626,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     required this.emotionalScore,
     this.emotionalTag,
     required this.investmentFlag,
+    this.note,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -621,6 +643,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       map['emotional_tag'] = Variable<String>(emotionalTag);
     }
     map['investment_flag'] = Variable<bool>(investmentFlag);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
     return map;
   }
 
@@ -638,6 +663,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ? const Value.absent()
           : Value(emotionalTag),
       investmentFlag: Value(investmentFlag),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
     );
   }
 
@@ -655,6 +681,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       emotionalScore: serializer.fromJson<int>(json['emotionalScore']),
       emotionalTag: serializer.fromJson<String?>(json['emotionalTag']),
       investmentFlag: serializer.fromJson<bool>(json['investmentFlag']),
+      note: serializer.fromJson<String?>(json['note']),
     );
   }
   @override
@@ -669,6 +696,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'emotionalScore': serializer.toJson<int>(emotionalScore),
       'emotionalTag': serializer.toJson<String?>(emotionalTag),
       'investmentFlag': serializer.toJson<bool>(investmentFlag),
+      'note': serializer.toJson<String?>(note),
     };
   }
 
@@ -681,6 +709,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     int? emotionalScore,
     Value<String?> emotionalTag = const Value.absent(),
     bool? investmentFlag,
+    Value<String?> note = const Value.absent(),
   }) => Transaction(
     id: id ?? this.id,
     accountId: accountId ?? this.accountId,
@@ -690,6 +719,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     emotionalScore: emotionalScore ?? this.emotionalScore,
     emotionalTag: emotionalTag.present ? emotionalTag.value : this.emotionalTag,
     investmentFlag: investmentFlag ?? this.investmentFlag,
+    note: note.present ? note.value : this.note,
   );
   Transaction copyWithCompanion(TransactionsCompanion data) {
     return Transaction(
@@ -711,6 +741,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       investmentFlag: data.investmentFlag.present
           ? data.investmentFlag.value
           : this.investmentFlag,
+      note: data.note.present ? data.note.value : this.note,
     );
   }
 
@@ -724,7 +755,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('categoryId: $categoryId, ')
           ..write('emotionalScore: $emotionalScore, ')
           ..write('emotionalTag: $emotionalTag, ')
-          ..write('investmentFlag: $investmentFlag')
+          ..write('investmentFlag: $investmentFlag, ')
+          ..write('note: $note')
           ..write(')'))
         .toString();
   }
@@ -739,6 +771,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     emotionalScore,
     emotionalTag,
     investmentFlag,
+    note,
   );
   @override
   bool operator ==(Object other) =>
@@ -751,7 +784,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.categoryId == this.categoryId &&
           other.emotionalScore == this.emotionalScore &&
           other.emotionalTag == this.emotionalTag &&
-          other.investmentFlag == this.investmentFlag);
+          other.investmentFlag == this.investmentFlag &&
+          other.note == this.note);
 }
 
 class TransactionsCompanion extends UpdateCompanion<Transaction> {
@@ -763,6 +797,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<int> emotionalScore;
   final Value<String?> emotionalTag;
   final Value<bool> investmentFlag;
+  final Value<String?> note;
   const TransactionsCompanion({
     this.id = const Value.absent(),
     this.accountId = const Value.absent(),
@@ -772,6 +807,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.emotionalScore = const Value.absent(),
     this.emotionalTag = const Value.absent(),
     this.investmentFlag = const Value.absent(),
+    this.note = const Value.absent(),
   });
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -782,6 +818,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.emotionalScore = const Value.absent(),
     this.emotionalTag = const Value.absent(),
     this.investmentFlag = const Value.absent(),
+    this.note = const Value.absent(),
   }) : accountId = Value(accountId),
        amount = Value(amount),
        transactionDate = Value(transactionDate);
@@ -794,6 +831,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<int>? emotionalScore,
     Expression<String>? emotionalTag,
     Expression<bool>? investmentFlag,
+    Expression<String>? note,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -804,6 +842,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (emotionalScore != null) 'emotional_score': emotionalScore,
       if (emotionalTag != null) 'emotional_tag': emotionalTag,
       if (investmentFlag != null) 'investment_flag': investmentFlag,
+      if (note != null) 'note': note,
     });
   }
 
@@ -816,6 +855,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Value<int>? emotionalScore,
     Value<String?>? emotionalTag,
     Value<bool>? investmentFlag,
+    Value<String?>? note,
   }) {
     return TransactionsCompanion(
       id: id ?? this.id,
@@ -826,6 +866,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       emotionalScore: emotionalScore ?? this.emotionalScore,
       emotionalTag: emotionalTag ?? this.emotionalTag,
       investmentFlag: investmentFlag ?? this.investmentFlag,
+      note: note ?? this.note,
     );
   }
 
@@ -856,6 +897,9 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (investmentFlag.present) {
       map['investment_flag'] = Variable<bool>(investmentFlag.value);
     }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
     return map;
   }
 
@@ -869,7 +913,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('categoryId: $categoryId, ')
           ..write('emotionalScore: $emotionalScore, ')
           ..write('emotionalTag: $emotionalTag, ')
-          ..write('investmentFlag: $investmentFlag')
+          ..write('investmentFlag: $investmentFlag, ')
+          ..write('note: $note')
           ..write(')'))
         .toString();
   }
@@ -1940,6 +1985,7 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       Value<int> emotionalScore,
       Value<String?> emotionalTag,
       Value<bool> investmentFlag,
+      Value<String?> note,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
     TransactionsCompanion Function({
@@ -1951,6 +1997,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<int> emotionalScore,
       Value<String?> emotionalTag,
       Value<bool> investmentFlag,
+      Value<String?> note,
     });
 
 final class $$TransactionsTableReferences
@@ -2041,6 +2088,11 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<bool> get investmentFlag => $composableBuilder(
     column: $table.investmentFlag,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2137,6 +2189,11 @@ class $$TransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableOrderingComposer get accountId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2200,6 +2257,9 @@ class $$TransactionsTableAnnotationComposer
     column: $table.investmentFlag,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
 
   $$AccountsTableAnnotationComposer get accountId {
     final $$AccountsTableAnnotationComposer composer = $composerBuilder(
@@ -2286,6 +2346,7 @@ class $$TransactionsTableTableManager
                 Value<int> emotionalScore = const Value.absent(),
                 Value<String?> emotionalTag = const Value.absent(),
                 Value<bool> investmentFlag = const Value.absent(),
+                Value<String?> note = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
                 accountId: accountId,
@@ -2295,6 +2356,7 @@ class $$TransactionsTableTableManager
                 emotionalScore: emotionalScore,
                 emotionalTag: emotionalTag,
                 investmentFlag: investmentFlag,
+                note: note,
               ),
           createCompanionCallback:
               ({
@@ -2306,6 +2368,7 @@ class $$TransactionsTableTableManager
                 Value<int> emotionalScore = const Value.absent(),
                 Value<String?> emotionalTag = const Value.absent(),
                 Value<bool> investmentFlag = const Value.absent(),
+                Value<String?> note = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 id: id,
                 accountId: accountId,
@@ -2315,6 +2378,7 @@ class $$TransactionsTableTableManager
                 emotionalScore: emotionalScore,
                 emotionalTag: emotionalTag,
                 investmentFlag: investmentFlag,
+                note: note,
               ),
           withReferenceMapper: (p0) => p0
               .map(

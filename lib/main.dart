@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'data/datasources/local/app_database.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/pages/account_list_page.dart';
-import 'presentation/widgets/neumorphism/neumorphic_button.dart';
+import 'presentation/pages/transaction/transaction_list_page.dart';
 
 part 'main.g.dart';
 
@@ -23,35 +23,48 @@ void main() {
   );
 }
 
-// ... (imports)
-
-class LifeAssetApp extends ConsumerWidget {
+class LifeAssetApp extends ConsumerStatefulWidget {
   const LifeAssetApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
-      title: 'Life Asset Manager',
-      theme: AppTheme.lightTheme,
-      home: const AccountListPage(),
-    );
-  }
+  ConsumerState<LifeAssetApp> createState() => _LifeAssetAppState();
 }
 
-class NeumorphicButtonDemo extends StatelessWidget {
-  const NeumorphicButtonDemo({super.key});
+class _LifeAssetAppState extends ConsumerState<LifeAssetApp> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    const TransactionListPage(),
+    const AccountListPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicButton(
-      onPressed: () {
-        debugPrint('Button Pressed');
-      },
-      child: const Text(
-        'Neumorphic Button',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: AppTheme.textColor,
+    return MaterialApp(
+      title: 'Life Asset Manager',
+      theme: AppTheme.lightTheme,
+      home: Scaffold(
+        body: _pages[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: '取引一覧',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet),
+              label: '口座一覧',
+            ),
+          ],
+          backgroundColor: AppTheme.baseColor,
+          selectedItemColor: AppTheme.accentColor,
+          unselectedItemColor: AppTheme.textColor.withValues(alpha: 0.5),
         ),
       ),
     );

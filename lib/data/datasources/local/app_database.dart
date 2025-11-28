@@ -29,6 +29,7 @@ class Transactions extends Table {
   TextColumn get emotionalTag => text().nullable()(); // "ワクワク", "後悔" など
   BoolColumn get investmentFlag =>
       boolean().withDefault(const Constant(false))(); // 自己投資フラグ
+  TextColumn get note => text().nullable()(); // メモ
 }
 
 // 報告書 3.2.3 タグテーブル
@@ -64,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -79,6 +80,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(transactionTags);
         await m.createTable(exchangeRates);
         await m.addColumn(accounts, accounts.currencyCode);
+      }
+      if (from < 3) {
+        // バージョン2から3への移行: Transactionsにnoteカラムを追加
+        await m.addColumn(transactions, transactions.note);
       }
     },
   );
