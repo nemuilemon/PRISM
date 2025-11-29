@@ -1,12 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:prism/domain/entities/transaction.dart';
 import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/domain/entities/transaction.dart';
 
 class InvestmentTrendChart extends StatelessWidget {
-  final List<Transaction> transactions;
+  const InvestmentTrendChart({required this.transactions, super.key});
 
-  const InvestmentTrendChart({super.key, required this.transactions});
+  final List<Transaction> transactions;
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +19,15 @@ class InvestmentTrendChart extends StatelessWidget {
       ..sort((a, b) => a.date.compareTo(b.date));
 
     // 自己投資の積み上げ計算
-    List<FlSpot> spots = [];
+    final spots = <FlSpot>[];
     double currentTotal = 0;
-    int index = 0;
-    bool hasInvestment = false;
+    var index = 0;
+    var hasInvestment = false;
 
     // 開始点
-    spots.add(const FlSpot(0, 0));
+    spots.add(FlSpot.zero);
 
-    for (var t in sorted) {
+    for (final t in sorted) {
       if (t.isInvestment) {
         currentTotal += t.amount;
         hasInvestment = true;
@@ -62,7 +62,7 @@ class InvestmentTrendChart extends StatelessWidget {
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: AppTheme.accentColor.withOpacity(0.2),
+              color: AppTheme.accentColor.withValues(alpha: 0.2),
             ),
           ),
         ],

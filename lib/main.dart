@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/data/datasources/local/app_database.dart';
+import 'package:prism/presentation/pages/account_list_page.dart';
+import 'package:prism/presentation/pages/dashboard/dashboard_page.dart';
+import 'package:prism/presentation/pages/settings/settings_page.dart';
+import 'package:prism/presentation/pages/transaction/transaction_list_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'data/datasources/local/app_database.dart';
-import 'core/theme/app_theme.dart';
-import 'presentation/pages/dashboard/dashboard_page.dart';
-import 'presentation/pages/account_list_page.dart';
-import 'presentation/pages/transaction/transaction_list_page.dart';
-import 'presentation/pages/settings/settings_page.dart';
 
 part 'main.g.dart';
 

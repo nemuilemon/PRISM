@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/services/import_export_service.dart';
-import 'package:prism/data/repositories/transaction_repository_impl.dart';
+import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/data/repositories/category_repository_impl.dart';
-
-import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
+import 'package:prism/data/repositories/transaction_repository_impl.dart';
 import 'package:prism/presentation/pages/settings/category_list_page.dart';
+import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -43,8 +42,8 @@ class SettingsPage extends ConsumerWidget {
                       color: AppTheme.accentColor,
                     ),
                     title: const Text('カテゴリ管理'),
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute<void>(
                           builder: (context) => const CategoryListPage(),
@@ -77,7 +76,7 @@ class SettingsPage extends ConsumerWidget {
                             const SnackBar(content: Text('インポートが完了しました')),
                           );
                         }
-                      } catch (e) {
+                      } on Exception catch (e) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('インポートエラー: $e')),
@@ -110,7 +109,7 @@ class SettingsPage extends ConsumerWidget {
                             const SnackBar(content: Text('エクスポートが完了しました')),
                           );
                         }
-                      } catch (e) {
+                      } on Exception catch (e) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('エクスポートエラー: $e')),

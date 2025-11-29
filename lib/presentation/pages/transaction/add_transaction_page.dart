@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
-import 'package:prism/presentation/controllers/account_list_controller.dart';
-import 'package:prism/presentation/controllers/transaction_list_controller.dart';
-import 'package:prism/presentation/controllers/category_list_controller.dart';
-import 'package:prism/presentation/widgets/neumorphism/neumorphic_button.dart';
-import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
-import 'package:prism/presentation/widgets/input/calculator_keyboard.dart';
 import 'package:prism/domain/entities/asset.dart';
 import 'package:prism/domain/entities/transaction.dart';
+import 'package:prism/presentation/controllers/account_list_controller.dart';
+import 'package:prism/presentation/controllers/category_list_controller.dart';
+import 'package:prism/presentation/controllers/transaction_list_controller.dart';
+import 'package:prism/presentation/widgets/input/calculator_keyboard.dart';
+import 'package:prism/presentation/widgets/neumorphism/neumorphic_button.dart';
+import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class AddTransactionPage extends ConsumerStatefulWidget {
-  final Transaction? transaction;
-
   const AddTransactionPage({super.key, this.transaction});
+
+  final Transaction? transaction;
 
   @override
   ConsumerState<AddTransactionPage> createState() => _AddTransactionPageState();
@@ -130,8 +130,8 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
                 child: TextFormField(
                   controller: _amountController,
                   readOnly: true,
-                  onTap: () {
-                    showModalBottomSheet<void>(
+                  onTap: () async {
+                    await showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
@@ -356,7 +356,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
                 child: NeumorphicButton(
                   onPressed: _submit,
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12),
                     child: Text(
                       widget.transaction == null ? '保存する' : '更新する',
                       textAlign: TextAlign.center,
@@ -378,7 +378,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
                   child: NeumorphicButton(
                     onPressed: _delete,
                     child: const Padding(
-                      padding: EdgeInsets.all(12.0),
+                      padding: EdgeInsets.all(12),
                       child: Text(
                         '削除する',
                         textAlign: TextAlign.center,
@@ -399,7 +399,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
     );
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       if (_selectedAccountId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -408,7 +408,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
         return;
       }
 
-      double amount = double.tryParse(_amountController.text) ?? 0;
+      var amount = double.tryParse(_amountController.text) ?? 0;
       // 支出ならマイナス、収入ならプラスにする
       if (_type == 'expense') {
         amount = -amount.abs();
@@ -453,7 +453,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
     }
   }
 
-  void _delete() async {
+  Future<void> _delete() async {
     if (widget.transaction != null) {
       final confirm = await showDialog<bool>(
         context: context,
@@ -473,7 +473,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
         ),
       );
 
-      if (confirm == true) {
+      if (confirm ?? false) {
         await ref
             .read(transactionListControllerProvider.notifier)
             .deleteTransaction(widget.transaction!.id);

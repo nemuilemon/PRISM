@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../controllers/account_list_controller.dart';
-import '../widgets/neumorphism/neumorphic_container.dart';
-import '../../core/theme/app_theme.dart';
+import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/domain/entities/asset.dart';
+import 'package:prism/presentation/controllers/account_list_controller.dart';
+import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class AccountListPage extends ConsumerWidget {
   const AccountListPage({super.key});
@@ -32,23 +33,25 @@ class AccountListPage extends ConsumerWidget {
                 child: NeumorphicContainer(
                   child: ListTile(
                     title: Text(
-                      asset.map(
-                        financial: (a) => a.name,
-                        point: (a) => a.providerName,
-                        experience: (a) => a.activityName,
-                      ),
+                      switch (asset) {
+                        FinancialAsset a => a.name,
+                        PointAsset a => a.providerName,
+                        ExperienceAsset a => a.activityName,
+                      },
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppTheme.textColor,
                       ),
                     ),
-                    subtitle: asset.map(
-                      financial: (a) =>
-                          Text('Financial - ${a.currency} : ${a.amount}'),
-                      point: (a) => Text('Point - ${a.points}pt'),
-                      experience: (a) =>
-                          Text('Experience - Lv.${a.accumulatedLevel}'),
-                    ),
+                    subtitle: switch (asset) {
+                      FinancialAsset a => Text(
+                        'Financial - ${a.currency} : ${a.amount}',
+                      ),
+                      PointAsset a => Text('Point - ${a.points}pt'),
+                      ExperienceAsset a => Text(
+                        'Experience - Lv.${a.accumulatedLevel}',
+                      ),
+                    },
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                 ),
@@ -66,11 +69,14 @@ class AccountListPage extends ConsumerWidget {
     );
   }
 
-  void _showAddAccountDialog(BuildContext context, WidgetRef ref) {
+  Future<void> _showAddAccountDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     final nameController = TextEditingController();
     final typeController = TextEditingController(text: 'Cash');
 
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Add Account'),
@@ -95,12 +101,14 @@ class AccountListPage extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               if (nameController.text.isNotEmpty) {
-                ref
+                await ref
                     .read(accountListControllerProvider.notifier)
                     .addAccount(nameController.text, typeController.text);
-                Navigator.pop(context);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               }
             },
             child: const Text('Add'),

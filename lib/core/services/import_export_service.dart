@@ -1,37 +1,38 @@
 import 'dart:io';
+
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:prism/domain/repositories/category_repository.dart';
+import 'package:prism/domain/repositories/transaction_repository.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:prism/domain/repositories/transaction_repository.dart';
-import 'package:prism/domain/repositories/category_repository.dart';
-
 class ImportExportService {
+  ImportExportService(this._transactionRepository, this._categoryRepository);
+
   final TransactionRepository _transactionRepository;
   final CategoryRepository _categoryRepository;
   // AccountRepositoryが必要だが、今回は簡易的に実装するか、DIで渡す
 
-  ImportExportService(this._transactionRepository, this._categoryRepository);
-
   Future<void> exportToCsv() async {
     final transactions = await _transactionRepository.getTransactions();
 
-    final List<List<dynamic>> rows = [];
-    // Header
-    rows.add([
-      '日付',
-      '口座ID', // 本来は口座名にすべきだが、簡易実装
-      'カテゴリID', // 本来はカテゴリ名
-      '内容',
-      '金額',
-      'タイプ', // income/expense
-      '感情スコア',
-      '自己投資',
-    ]);
+    final rows = <List<dynamic>>[
+      [
+        '日付',
+        '口座ID', // 本来は口座名にすべきだが、簡易実装
+        'カテゴリID', // 本来はカテゴリ名
+        '内容',
+        '金額',
+        'タイプ', // income/expense
+        '感情スコア',
+        '自己投資',
+      ],
+    ];
 
-    for (var t in transactions) {
+    for (final t in transactions) {
       rows.add([
         DateFormat('yyyy/MM/dd HH:mm:ss').format(t.date),
         t.accountId,
@@ -40,7 +41,7 @@ class ImportExportService {
         t.amount,
         t.type,
         t.emotionalScore,
-        t.isInvestment ? 'Yes' : 'No',
+        if (t.isInvestment) 'Yes' else 'No',
       ]);
     }
 
@@ -101,7 +102,7 @@ class ImportExportService {
           categoryId = category.id;
 
           // 口座解決 (今回はID=1固定とする、または別途解決ロジックが必要)
-          // TODO: AccountRepositoryを使って名前からIDを引く
+          // TODO(user): AccountRepositoryを使って名前からIDを引く
           const accountId = 1;
 
           await _transactionRepository.addTransaction(
@@ -112,8 +113,8 @@ class ImportExportService {
             note: note,
             type: type,
           );
-        } catch (e) {
-          print('Import error at line $i: $e');
+        } on Exception catch (e) {
+          debugPrint('Import error at line $i: $e');
         }
       }
     }

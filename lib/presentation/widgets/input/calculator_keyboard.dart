@@ -4,16 +4,16 @@ import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_button.dart';
 
 class CalculatorKeyboard extends StatefulWidget {
-  final String initialValue;
-  final ValueChanged<String> onChanged;
-  final VoidCallback onSubmit;
-
   const CalculatorKeyboard({
-    super.key,
     required this.initialValue,
     required this.onChanged,
     required this.onSubmit,
+    super.key,
   });
+
+  final String initialValue;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onSubmit;
 
   @override
   State<CalculatorKeyboard> createState() => _CalculatorKeyboardState();
@@ -55,7 +55,7 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
       final eval = exp.evaluate(EvaluationType.REAL, cm) as double;
 
       // 整数なら.0を消す
-      String result = eval.toString();
+      var result = eval.toString();
       if (result.endsWith('.0')) {
         result = result.substring(0, result.length - 2);
       }
@@ -64,7 +64,7 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
         _expression = result;
       });
       widget.onChanged(_expression);
-    } catch (e) {
+    } on Exception catch (e) {
       // エラー時は何もしないか、エラー表示
       debugPrint('Calc Error: $e');
     }
@@ -111,12 +111,7 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
               _buildButton(
                 '=',
                 color: Colors.green,
-                onPressed: () {
-                  _evaluate();
-                  // 計算結果を確定として送信するならここだが、
-                  // ユーザーは計算後にOKボタンを押したいかもしれない。
-                  // ここでは計算実行のみにする。
-                },
+                onPressed: _evaluate,
               ),
               _buildButton('+', color: Colors.orange),
             ],
@@ -129,7 +124,7 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
               Expanded(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.all(4),
                   child: NeumorphicButton(
                     onPressed: widget.onSubmit,
                     child: const Center(
@@ -158,7 +153,7 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
   Widget _buildButton(String text, {Color? color, VoidCallback? onPressed}) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4),
         child: NeumorphicButton(
           onPressed: onPressed ?? () => _onKeyPressed(text),
           child: Center(

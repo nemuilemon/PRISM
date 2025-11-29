@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prism/data/datasources/local/app_database.dart' as db;
+import 'package:prism/domain/entities/asset.dart';
+import 'package:prism/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../datasources/local/app_database.dart' as db;
-import '../../domain/entities/asset.dart';
-import '../../main.dart'; // appDatabaseProviderへのアクセス
 
 part 'account_repository.g.dart';
 
@@ -13,9 +13,9 @@ AccountRepository accountRepository(Ref ref) {
 }
 
 class AccountRepository {
-  final db.AppDatabase _db;
-
   AccountRepository(this._db);
+
+  final db.AppDatabase _db;
 
   // 資産リスト（残高付き）を監視
   Stream<List<Asset>> watchAssets() {
@@ -44,7 +44,7 @@ class AccountRepository {
               id: account.id.toString(),
               providerName: account.name,
               points: balance.toInt(),
-              exchangeRate: 1.0, // 仮: 後でExchangeRatesテーブルから取得
+              exchangeRate: 1, // 仮: 後でExchangeRatesテーブルから取得
             );
           case 'Time':
           case 'Experience':
@@ -67,8 +67,8 @@ class AccountRepository {
   }
 
   // 全てのアカウントを取得 (Legacy)
-  Future<List<db.Account>> getAllAccounts() async {
-    return await _db.select(_db.accounts).get();
+  Future<List<db.Account>> getAllAccounts() {
+    return _db.select(_db.accounts).get();
   }
 
   // アカウント作成
@@ -76,8 +76,8 @@ class AccountRepository {
     required String name,
     required String type,
     String currencyCode = 'JPY',
-  }) async {
-    return await _db
+  }) {
+    return _db
         .into(_db.accounts)
         .insert(
           db.AccountsCompanion.insert(

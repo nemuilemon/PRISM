@@ -1,6 +1,6 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:prism/domain/entities/transaction.dart';
 import 'package:prism/data/repositories/transaction_repository_impl.dart';
+import 'package:prism/domain/entities/transaction.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'transaction_list_controller.g.dart';
 

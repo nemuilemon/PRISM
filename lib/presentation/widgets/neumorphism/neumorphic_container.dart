@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import 'package:prism/core/theme/app_theme.dart';
 
 class NeumorphicContainer extends StatelessWidget {
+  const NeumorphicContainer({
+    required this.child,
+    super.key,
+    this.borderRadius = 12,
+    this.padding = const EdgeInsets.all(16),
+    this.isPressed = false,
+  });
+
   final Widget child;
   final double borderRadius;
   final EdgeInsets padding;
   final bool isPressed;
-
-  const NeumorphicContainer({
-    super.key,
-    required this.child,
-    this.borderRadius = 12.0,
-    this.padding = const EdgeInsets.all(16.0),
-    this.isPressed = false,
-  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: isPressed ? AppTheme.baseColor : AppTheme.baseColor,
+        color: AppTheme.baseColor,
         borderRadius: BorderRadius.circular(borderRadius),
         // 簡易的な実装: 押されたときは影をなくして少し暗くする、あるいは逆の影をつける
         // ここでは「押されたらフラットになる」表現を採用
         boxShadow: isPressed
             ? []
-            : [
+            : const [
                 BoxShadow(
                   color: AppTheme.darkShadow,
-                  offset: const Offset(4, 4),
+                  offset: Offset(4, 4),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
                 BoxShadow(
                   color: AppTheme.lightShadow,
-                  offset: const Offset(-4, -4),
+                  offset: Offset(-4, -4),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),

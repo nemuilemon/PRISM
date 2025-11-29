@@ -1,6 +1,6 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:prism/domain/entities/category.dart';
 import 'package:prism/data/repositories/category_repository_impl.dart';
+import 'package:prism/domain/entities/category.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'category_list_controller.g.dart';
 

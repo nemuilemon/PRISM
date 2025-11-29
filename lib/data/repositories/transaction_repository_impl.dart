@@ -1,10 +1,9 @@
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:prism/data/datasources/local/app_database.dart' as db;
 import 'package:prism/domain/entities/transaction.dart' as domain;
 import 'package:prism/domain/repositories/transaction_repository.dart';
-import '../datasources/local/app_database.dart' as db;
-import '../../main.dart';
+import 'package:prism/main.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'transaction_repository_impl.g.dart';
 
@@ -14,21 +13,21 @@ TransactionRepository transactionRepository(Ref ref) {
 }
 
 class TransactionRepositoryImpl implements TransactionRepository {
-  final db.AppDatabase _db;
-
   TransactionRepositoryImpl(this._db);
+
+  final db.AppDatabase _db;
 
   @override
   Stream<List<domain.Transaction>> watchTransactions() {
     return _db.select(_db.transactions).watch().map((rows) {
-      return rows.map((row) => _toDomain(row)).toList();
+      return rows.map(_toDomain).toList();
     });
   }
 
   @override
   Future<List<domain.Transaction>> getTransactions() async {
     final rows = await _db.select(_db.transactions).get();
-    return rows.map((row) => _toDomain(row)).toList();
+    return rows.map(_toDomain).toList();
   }
 
   @override

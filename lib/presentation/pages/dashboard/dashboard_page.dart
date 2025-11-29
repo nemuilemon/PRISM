@@ -175,7 +175,7 @@ class DashboardPage extends ConsumerWidget {
                           t.date.month == now.month &&
                           t.isInvestment,
                     );
-                    final total = thisMonth.fold(
+                    final total = thisMonth.fold<double>(
                       0.0,
                       (sum, t) => sum + t.amount,
                     );

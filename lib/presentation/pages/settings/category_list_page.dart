@@ -80,22 +80,22 @@ class CategoryListPage extends ConsumerWidget {
       floatingActionButton: NeumorphicButton(
         onPressed: () => _showCategoryDialog(context, ref, null),
         child: const Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16),
           child: Icon(Icons.add, color: AppTheme.accentColor),
         ),
       ),
     );
   }
 
-  void _showCategoryDialog(
+  Future<void> _showCategoryDialog(
     BuildContext context,
     WidgetRef ref,
     Category? category,
-  ) {
+  ) async {
     final nameController = TextEditingController(text: category?.name ?? '');
-    String type = category?.type ?? 'expense';
+    var type = category?.type ?? 'expense';
 
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -167,8 +167,12 @@ class CategoryListPage extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, int id) {
-    showDialog<void>(
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    int id,
+  ) async {
+    await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('削除の確認'),

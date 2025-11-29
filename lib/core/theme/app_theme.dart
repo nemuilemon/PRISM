@@ -13,7 +13,7 @@ class AppTheme {
       scaffoldBackgroundColor: baseColor,
       colorScheme: ColorScheme.fromSeed(
         seedColor: accentColor,
-        background: baseColor,
+        surface: baseColor,
       ),
       textTheme: const TextTheme(
         bodyMedium: TextStyle(color: textColor),

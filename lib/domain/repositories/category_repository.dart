@@ -1,4 +1,4 @@
-import '../entities/category.dart';
+import 'package:prism/domain/entities/category.dart';
 
 abstract class CategoryRepository {
   Stream<List<Category>> watchCategories();

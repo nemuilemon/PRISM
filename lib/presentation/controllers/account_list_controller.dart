@@ -1,6 +1,6 @@
+import 'package:prism/data/repositories/account_repository.dart';
+import 'package:prism/domain/entities/asset.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../data/repositories/account_repository.dart';
-import '../../domain/entities/asset.dart';
 
 part 'account_list_controller.g.dart';
 
@@ -21,7 +21,7 @@ class AccountListController extends _$AccountListController {
       await repository.createAccount(name: name, type: type);
       // リストを再取得して更新
       ref.invalidateSelf();
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }

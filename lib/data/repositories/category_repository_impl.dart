@@ -1,10 +1,9 @@
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:prism/data/datasources/local/app_database.dart' as db;
 import 'package:prism/domain/entities/category.dart' as domain;
 import 'package:prism/domain/repositories/category_repository.dart';
-import '../datasources/local/app_database.dart' as db;
-import '../../main.dart';
+import 'package:prism/main.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'category_repository_impl.g.dart';
 
@@ -14,21 +13,21 @@ CategoryRepository categoryRepository(Ref ref) {
 }
 
 class CategoryRepositoryImpl implements CategoryRepository {
-  final db.AppDatabase _db;
-
   CategoryRepositoryImpl(this._db);
+
+  final db.AppDatabase _db;
 
   @override
   Stream<List<domain.Category>> watchCategories() {
     return _db.select(_db.categories).watch().map((rows) {
-      return rows.map((row) => _toDomain(row)).toList();
+      return rows.map(_toDomain).toList();
     });
   }
 
   @override
   Future<List<domain.Category>> getCategories() async {
     final rows = await _db.select(_db.categories).get();
-    return rows.map((row) => _toDomain(row)).toList();
+    return rows.map(_toDomain).toList();
   }
 
   @override

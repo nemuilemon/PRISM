@@ -1,4 +1,4 @@
-import '../entities/transaction.dart';
+import 'package:prism/domain/entities/transaction.dart';
 
 abstract class TransactionRepository {
   Stream<List<Transaction>> watchTransactions();

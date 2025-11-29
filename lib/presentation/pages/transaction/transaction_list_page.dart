@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/presentation/controllers/transaction_list_controller.dart';
+import 'package:prism/presentation/pages/transaction/add_transaction_page.dart';
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_button.dart';
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
-import 'package:prism/presentation/pages/transaction/add_transaction_page.dart';
 
 class TransactionListPage extends ConsumerWidget {
   const TransactionListPage({super.key});
@@ -36,8 +36,8 @@ class TransactionListPage extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: NeumorphicContainer(
                   child: ListTile(
-                    onTap: () {
-                      Navigator.of(context).push(
+                    onTap: () async {
+                      await Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (context) =>
                               AddTransactionPage(transaction: transaction),
@@ -92,8 +92,8 @@ class TransactionListPage extends ConsumerWidget {
         child: NeumorphicButton(
           padding: EdgeInsets.zero,
           borderRadius: 30,
-          onPressed: () {
-            Navigator.of(context).push(
+          onPressed: () async {
+            await Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const AddTransactionPage(),
               ),
