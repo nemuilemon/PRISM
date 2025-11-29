@@ -12,6 +12,7 @@ abstract class TransactionRepository {
     String? emotionalTag,
     bool isInvestment = false,
     String? note,
+    String type = 'expense',
   });
   Future<void> deleteTransaction(int id);
   Future<void> updateTransaction(Transaction transaction);

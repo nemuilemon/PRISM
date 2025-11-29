@@ -13,7 +13,7 @@ part of 'account_list_controller.dart';
 const accountListControllerProvider = AccountListControllerProvider._();
 
 final class AccountListControllerProvider
-    extends $AsyncNotifierProvider<AccountListController, List<dynamic>> {
+    extends $StreamNotifierProvider<AccountListController, List<Asset>> {
   const AccountListControllerProvider._()
     : super(
         from: null,
@@ -34,20 +34,20 @@ final class AccountListControllerProvider
 }
 
 String _$accountListControllerHash() =>
-    r'77e0abebfac0451d0371c99d833def2353626d03';
+    r'b2c2ce6d33bf9f02c77c8e529c06331739dc1500';
 
-abstract class _$AccountListController extends $AsyncNotifier<List<dynamic>> {
-  FutureOr<List<dynamic>> build();
+abstract class _$AccountListController extends $StreamNotifier<List<Asset>> {
+  Stream<List<Asset>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<List<dynamic>>, List<dynamic>>;
+    final ref = this.ref as $Ref<AsyncValue<List<Asset>>, List<Asset>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<dynamic>>, List<dynamic>>,
-              AsyncValue<List<dynamic>>,
+              AnyNotifier<AsyncValue<List<Asset>>, List<Asset>>,
+              AsyncValue<List<Asset>>,
               Object?,
               Object?
             >;

@@ -41,6 +41,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
     String? emotionalTag,
     bool isInvestment = false,
     String? note,
+    String type = 'expense',
   }) async {
     await _db
         .into(_db.transactions)
@@ -54,6 +55,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
             emotionalTag: Value(emotionalTag),
             investmentFlag: Value(isInvestment),
             note: Value(note),
+            type: Value(type),
           ),
         );
   }
@@ -78,6 +80,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
             emotionalTag: Value(transaction.emotionalTag),
             investmentFlag: Value(transaction.isInvestment),
             note: Value(transaction.note),
+            type: Value(transaction.type),
           ),
         );
   }
@@ -93,6 +96,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
       emotionalTag: row.emotionalTag,
       isInvestment: row.investmentFlag,
       note: row.note,
+      type: row.type,
     );
   }
 }

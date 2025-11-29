@@ -52,7 +52,7 @@
     - ONの場合、UI上で「Asset」として扱われる演出。
 
 ### 2. Logic Implementation
-- [ ] **Asset Calculation**:
+- [x] **Asset Calculation**:
     - 口座残高の動的計算（初期残高 + トランザクション合計）。
     - ※ 現状の `Accounts` テーブルには `balance` カラムがないため、トランザクションからの算出または `Accounts` へのカラム追加を検討（今回はトランザクション集計を採用予定）。
 
@@ -60,7 +60,7 @@
 **目的**: ユーザーに資産と感情の状態をフィードバックする。
 
 ### 1. Dashboard UI
-- [ ] **Home Page**:
+- [x] **Home Page**:
     - 総資産表示 (Total Assets)。
     - 「無形資産（自己投資）」の分離表示。
     - 直近のトランザクション（簡易リスト）。
@@ -85,6 +85,22 @@
 - [x] `AddTransactionPage` に `EmotionalScore` と `InvestmentFlag` を追加。
 - [x] DB保存処理の確認。
 
-### Step 4: Dashboard (Next)
-1. `DashboardPage` 作成。
-2. アプリ起動時のホーム画面を `DashboardPage` に変更（またはタブに追加）。
+### Step 4: Logic & Dashboard (Current Focus)
+- [x] **Asset Calculation Logic**:
+    - `AccountRepository` に残高集計ロジックを追加（Driftの集計クエリ活用）。
+    - `AccountListController` が残高付きのデータを返すように修正。
+- [x] **Dashboard Page**:
+    - `lib/presentation/pages/dashboard/dashboard_page.dart` 作成。
+
+### Step 5: Refinement (Ad-hoc Requests)
+- [x] **Income/Expense Separation**:
+    - `Transactions` テーブルに `type` カラム追加。
+    - `AddTransactionPage` に収入/支出切り替えトグル追加。
+- [x] **Transaction Editing**:
+    - `AddTransactionPage` を編集モードに対応。
+    - `TransactionListPage` から編集画面への遷移追加。
+
+## Phase 4: Advanced Features (Future)
+- [x] **Category Management**: カテゴリ編集機能。
+- [x] **Data Export**: CSV/JSONエクスポート。
+- [x] **Data Import**: CSVインポート機能。

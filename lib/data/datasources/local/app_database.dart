@@ -30,6 +30,8 @@ class Transactions extends Table {
   BoolColumn get investmentFlag =>
       boolean().withDefault(const Constant(false))(); // 自己投資フラグ
   TextColumn get note => text().nullable()(); // メモ
+  TextColumn get type =>
+      text().withDefault(const Constant('expense'))(); // income, expense
 }
 
 // 報告書 3.2.3 タグテーブル
@@ -58,23 +60,51 @@ class ExchangeRates extends Table {
   Set<Column> get primaryKey => {fromCurrency, toCurrency};
 }
 
+// カテゴリテーブル
+class Categories extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  TextColumn get type =>
+      text().withDefault(const Constant('expense'))(); // income, expense
+}
+
 @DriftDatabase(
-  tables: [Accounts, Transactions, Tags, TransactionTags, ExchangeRates],
+  tables: [
+    Accounts,
+    Transactions,
+    Tags,
+    TransactionTags,
+    ExchangeRates,
+    Categories,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (Migrator m) async {
       await m.createAll();
+      // デフォルトカテゴリの挿入
+      await batch((batch) {
+        batch.insertAll(categories, [
+          CategoriesCompanion.insert(name: '食費', type: const Value('expense')),
+          CategoriesCompanion.insert(name: '日用品', type: const Value('expense')),
+          CategoriesCompanion.insert(name: '交通費', type: const Value('expense')),
+          CategoriesCompanion.insert(
+            name: '趣味・娯楽',
+            type: const Value('expense'),
+          ),
+          CategoriesCompanion.insert(name: '給与', type: const Value('income')),
+          CategoriesCompanion.insert(name: 'その他', type: const Value('expense')),
+        ]);
+      });
     },
     onUpgrade: (Migrator m, int from, int to) async {
       if (from < 2) {
-        // バージョン1から2への移行: 新しいテーブルを作成し、Accountsにカラムを追加
         await m.createTable(transactions);
         await m.createTable(tags);
         await m.createTable(transactionTags);
@@ -82,8 +112,39 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(accounts, accounts.currencyCode);
       }
       if (from < 3) {
-        // バージョン2から3への移行: Transactionsにnoteカラムを追加
         await m.addColumn(transactions, transactions.note);
+      }
+      if (from < 4) {
+        await m.addColumn(transactions, transactions.type);
+      }
+      if (from < 5) {
+        await m.createTable(categories);
+        // デフォルトカテゴリの挿入
+        await batch((batch) {
+          batch.insertAll(categories, [
+            CategoriesCompanion.insert(
+              name: '食費',
+              type: const Value('expense'),
+            ),
+            CategoriesCompanion.insert(
+              name: '日用品',
+              type: const Value('expense'),
+            ),
+            CategoriesCompanion.insert(
+              name: '交通費',
+              type: const Value('expense'),
+            ),
+            CategoriesCompanion.insert(
+              name: '趣味・娯楽',
+              type: const Value('expense'),
+            ),
+            CategoriesCompanion.insert(name: '給与', type: const Value('income')),
+            CategoriesCompanion.insert(
+              name: 'その他',
+              type: const Value('expense'),
+            ),
+          ]);
+        });
       }
     },
   );

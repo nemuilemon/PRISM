@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/account_list_controller.dart';
 import '../widgets/neumorphism/neumorphic_container.dart';
 import '../../core/theme/app_theme.dart';
-import '../../data/datasources/local/app_database.dart' as db;
 
 class AccountListPage extends ConsumerWidget {
   const AccountListPage({super.key});
@@ -19,27 +18,37 @@ class AccountListPage extends ConsumerWidget {
         elevation: 0,
       ),
       body: accountListAsync.when(
-        data: (accounts) {
-          if (accounts.isEmpty) {
+        data: (assets) {
+          if (assets.isEmpty) {
             return const Center(child: Text('No accounts yet. Add one!'));
           }
           return ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: accounts.length,
+            itemCount: assets.length,
             itemBuilder: (context, index) {
-              final account = accounts[index] as db.Account;
+              final asset = assets[index];
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: NeumorphicContainer(
                   child: ListTile(
                     title: Text(
-                      account.name,
+                      asset.map(
+                        financial: (a) => a.name,
+                        point: (a) => a.providerName,
+                        experience: (a) => a.activityName,
+                      ),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppTheme.textColor,
                       ),
                     ),
-                    subtitle: Text('${account.type} - ${account.currencyCode}'),
+                    subtitle: asset.map(
+                      financial: (a) =>
+                          Text('Financial - ${a.currency} : ${a.amount}'),
+                      point: (a) => Text('Point - ${a.points}pt'),
+                      experience: (a) =>
+                          Text('Experience - Lv.${a.accumulatedLevel}'),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                 ),

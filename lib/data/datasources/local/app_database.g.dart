@@ -460,6 +460,16 @@ class $TransactionsTable extends Transactions
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('expense'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -471,6 +481,7 @@ class $TransactionsTable extends Transactions
     emotionalTag,
     investmentFlag,
     note,
+    type,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -553,6 +564,12 @@ class $TransactionsTable extends Transactions
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    }
     return context;
   }
 
@@ -598,6 +615,10 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
     );
   }
 
@@ -617,6 +638,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final String? emotionalTag;
   final bool investmentFlag;
   final String? note;
+  final String type;
   const Transaction({
     required this.id,
     required this.accountId,
@@ -627,6 +649,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     this.emotionalTag,
     required this.investmentFlag,
     this.note,
+    required this.type,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -646,6 +669,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    map['type'] = Variable<String>(type);
     return map;
   }
 
@@ -664,6 +688,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           : Value(emotionalTag),
       investmentFlag: Value(investmentFlag),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      type: Value(type),
     );
   }
 
@@ -682,6 +707,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       emotionalTag: serializer.fromJson<String?>(json['emotionalTag']),
       investmentFlag: serializer.fromJson<bool>(json['investmentFlag']),
       note: serializer.fromJson<String?>(json['note']),
+      type: serializer.fromJson<String>(json['type']),
     );
   }
   @override
@@ -697,6 +723,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'emotionalTag': serializer.toJson<String?>(emotionalTag),
       'investmentFlag': serializer.toJson<bool>(investmentFlag),
       'note': serializer.toJson<String?>(note),
+      'type': serializer.toJson<String>(type),
     };
   }
 
@@ -710,6 +737,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     Value<String?> emotionalTag = const Value.absent(),
     bool? investmentFlag,
     Value<String?> note = const Value.absent(),
+    String? type,
   }) => Transaction(
     id: id ?? this.id,
     accountId: accountId ?? this.accountId,
@@ -720,6 +748,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     emotionalTag: emotionalTag.present ? emotionalTag.value : this.emotionalTag,
     investmentFlag: investmentFlag ?? this.investmentFlag,
     note: note.present ? note.value : this.note,
+    type: type ?? this.type,
   );
   Transaction copyWithCompanion(TransactionsCompanion data) {
     return Transaction(
@@ -742,6 +771,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ? data.investmentFlag.value
           : this.investmentFlag,
       note: data.note.present ? data.note.value : this.note,
+      type: data.type.present ? data.type.value : this.type,
     );
   }
 
@@ -756,7 +786,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('emotionalScore: $emotionalScore, ')
           ..write('emotionalTag: $emotionalTag, ')
           ..write('investmentFlag: $investmentFlag, ')
-          ..write('note: $note')
+          ..write('note: $note, ')
+          ..write('type: $type')
           ..write(')'))
         .toString();
   }
@@ -772,6 +803,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     emotionalTag,
     investmentFlag,
     note,
+    type,
   );
   @override
   bool operator ==(Object other) =>
@@ -785,7 +817,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.emotionalScore == this.emotionalScore &&
           other.emotionalTag == this.emotionalTag &&
           other.investmentFlag == this.investmentFlag &&
-          other.note == this.note);
+          other.note == this.note &&
+          other.type == this.type);
 }
 
 class TransactionsCompanion extends UpdateCompanion<Transaction> {
@@ -798,6 +831,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<String?> emotionalTag;
   final Value<bool> investmentFlag;
   final Value<String?> note;
+  final Value<String> type;
   const TransactionsCompanion({
     this.id = const Value.absent(),
     this.accountId = const Value.absent(),
@@ -808,6 +842,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.emotionalTag = const Value.absent(),
     this.investmentFlag = const Value.absent(),
     this.note = const Value.absent(),
+    this.type = const Value.absent(),
   });
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -819,6 +854,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.emotionalTag = const Value.absent(),
     this.investmentFlag = const Value.absent(),
     this.note = const Value.absent(),
+    this.type = const Value.absent(),
   }) : accountId = Value(accountId),
        amount = Value(amount),
        transactionDate = Value(transactionDate);
@@ -832,6 +868,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<String>? emotionalTag,
     Expression<bool>? investmentFlag,
     Expression<String>? note,
+    Expression<String>? type,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -843,6 +880,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (emotionalTag != null) 'emotional_tag': emotionalTag,
       if (investmentFlag != null) 'investment_flag': investmentFlag,
       if (note != null) 'note': note,
+      if (type != null) 'type': type,
     });
   }
 
@@ -856,6 +894,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Value<String?>? emotionalTag,
     Value<bool>? investmentFlag,
     Value<String?>? note,
+    Value<String>? type,
   }) {
     return TransactionsCompanion(
       id: id ?? this.id,
@@ -867,6 +906,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       emotionalTag: emotionalTag ?? this.emotionalTag,
       investmentFlag: investmentFlag ?? this.investmentFlag,
       note: note ?? this.note,
+      type: type ?? this.type,
     );
   }
 
@@ -900,6 +940,9 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
     return map;
   }
 
@@ -914,7 +957,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('emotionalScore: $emotionalScore, ')
           ..write('emotionalTag: $emotionalTag, ')
           ..write('investmentFlag: $investmentFlag, ')
-          ..write('note: $note')
+          ..write('note: $note, ')
+          ..write('type: $type')
           ..write(')'))
         .toString();
   }
@@ -1656,6 +1700,246 @@ class ExchangeRatesCompanion extends UpdateCompanion<ExchangeRate> {
   }
 }
 
+class $CategoriesTable extends Categories
+    with TableInfo<$CategoriesTable, Category> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CategoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('expense'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, type];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'categories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Category> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Category map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Category(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+    );
+  }
+
+  @override
+  $CategoriesTable createAlias(String alias) {
+    return $CategoriesTable(attachedDatabase, alias);
+  }
+}
+
+class Category extends DataClass implements Insertable<Category> {
+  final int id;
+  final String name;
+  final String type;
+  const Category({required this.id, required this.name, required this.type});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['type'] = Variable<String>(type);
+    return map;
+  }
+
+  CategoriesCompanion toCompanion(bool nullToAbsent) {
+    return CategoriesCompanion(
+      id: Value(id),
+      name: Value(name),
+      type: Value(type),
+    );
+  }
+
+  factory Category.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Category(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      type: serializer.fromJson<String>(json['type']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'type': serializer.toJson<String>(type),
+    };
+  }
+
+  Category copyWith({int? id, String? name, String? type}) => Category(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    type: type ?? this.type,
+  );
+  Category copyWithCompanion(CategoriesCompanion data) {
+    return Category(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      type: data.type.present ? data.type.value : this.type,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Category(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, type);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Category &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.type == this.type);
+}
+
+class CategoriesCompanion extends UpdateCompanion<Category> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> type;
+  const CategoriesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.type = const Value.absent(),
+  });
+  CategoriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.type = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<Category> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? type,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (type != null) 'type': type,
+    });
+  }
+
+  CategoriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? type,
+  }) {
+    return CategoriesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      type: type ?? this.type,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CategoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1666,6 +1950,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $ExchangeRatesTable exchangeRates = $ExchangeRatesTable(this);
+  late final $CategoriesTable categories = $CategoriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1676,6 +1961,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tags,
     transactionTags,
     exchangeRates,
+    categories,
   ];
 }
 
@@ -1986,6 +2272,7 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       Value<String?> emotionalTag,
       Value<bool> investmentFlag,
       Value<String?> note,
+      Value<String> type,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
     TransactionsCompanion Function({
@@ -1998,6 +2285,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<String?> emotionalTag,
       Value<bool> investmentFlag,
       Value<String?> note,
+      Value<String> type,
     });
 
 final class $$TransactionsTableReferences
@@ -2093,6 +2381,11 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get note => $composableBuilder(
     column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2194,6 +2487,11 @@ class $$TransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableOrderingComposer get accountId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2260,6 +2558,9 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
 
   $$AccountsTableAnnotationComposer get accountId {
     final $$AccountsTableAnnotationComposer composer = $composerBuilder(
@@ -2347,6 +2648,7 @@ class $$TransactionsTableTableManager
                 Value<String?> emotionalTag = const Value.absent(),
                 Value<bool> investmentFlag = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String> type = const Value.absent(),
               }) => TransactionsCompanion(
                 id: id,
                 accountId: accountId,
@@ -2357,6 +2659,7 @@ class $$TransactionsTableTableManager
                 emotionalTag: emotionalTag,
                 investmentFlag: investmentFlag,
                 note: note,
+                type: type,
               ),
           createCompanionCallback:
               ({
@@ -2369,6 +2672,7 @@ class $$TransactionsTableTableManager
                 Value<String?> emotionalTag = const Value.absent(),
                 Value<bool> investmentFlag = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String> type = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 id: id,
                 accountId: accountId,
@@ -2379,6 +2683,7 @@ class $$TransactionsTableTableManager
                 emotionalTag: emotionalTag,
                 investmentFlag: investmentFlag,
                 note: note,
+                type: type,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -3241,6 +3546,148 @@ typedef $$ExchangeRatesTableProcessedTableManager =
       ExchangeRate,
       PrefetchHooks Function()
     >;
+typedef $$CategoriesTableCreateCompanionBuilder =
+    CategoriesCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<String> type,
+    });
+typedef $$CategoriesTableUpdateCompanionBuilder =
+    CategoriesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String> type,
+    });
+
+class $$CategoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CategoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CategoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+}
+
+class $$CategoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CategoriesTable,
+          Category,
+          $$CategoriesTableFilterComposer,
+          $$CategoriesTableOrderingComposer,
+          $$CategoriesTableAnnotationComposer,
+          $$CategoriesTableCreateCompanionBuilder,
+          $$CategoriesTableUpdateCompanionBuilder,
+          (Category, BaseReferences<_$AppDatabase, $CategoriesTable, Category>),
+          Category,
+          PrefetchHooks Function()
+        > {
+  $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CategoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CategoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CategoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> type = const Value.absent(),
+              }) => CategoriesCompanion(id: id, name: name, type: type),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String> type = const Value.absent(),
+              }) => CategoriesCompanion.insert(id: id, name: name, type: type),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CategoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CategoriesTable,
+      Category,
+      $$CategoriesTableFilterComposer,
+      $$CategoriesTableOrderingComposer,
+      $$CategoriesTableAnnotationComposer,
+      $$CategoriesTableCreateCompanionBuilder,
+      $$CategoriesTableUpdateCompanionBuilder,
+      (Category, BaseReferences<_$AppDatabase, $CategoriesTable, Category>),
+      Category,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3254,4 +3701,6 @@ class $AppDatabaseManager {
       $$TransactionTagsTableTableManager(_db, _db.transactionTags);
   $$ExchangeRatesTableTableManager get exchangeRates =>
       $$ExchangeRatesTableTableManager(_db, _db.exchangeRates);
+  $$CategoriesTableTableManager get categories =>
+      $$CategoriesTableTableManager(_db, _db.categories);
 }

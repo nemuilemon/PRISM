@@ -1,16 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/repositories/account_repository.dart';
-import '../../data/datasources/local/app_database.dart' as db;
+import '../../domain/entities/asset.dart';
 
 part 'account_list_controller.g.dart';
 
 @riverpod
 class AccountListController extends _$AccountListController {
   @override
-  Future<List<dynamic>> build() async {
-    // リポジトリからデータを取得
+  Stream<List<Asset>> build() {
+    // リポジトリからデータを監視
     final repository = ref.watch(accountRepositoryProvider);
-    return repository.getAllAccounts();
+    return repository.watchAssets();
   }
 
   // アカウント追加

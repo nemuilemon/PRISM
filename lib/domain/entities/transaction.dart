@@ -14,5 +14,6 @@ abstract class Transaction with _$Transaction {
     String? emotionalTag,
     @Default(false) bool isInvestment,
     String? note,
+    @Default('expense') String type,
   }) = _Transaction;
 }

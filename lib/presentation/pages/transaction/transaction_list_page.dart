@@ -36,6 +36,14 @@ class TransactionListPage extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: 16),
                 child: NeumorphicContainer(
                   child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) =>
+                              AddTransactionPage(transaction: transaction),
+                        ),
+                      );
+                    },
                     title: Text(
                       transaction.note ?? '取引',
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -50,8 +58,8 @@ class TransactionListPage extends ConsumerWidget {
                         Text(
                           '${transaction.amount.toInt()} 円',
                           style: TextStyle(
-                            color: transaction.isInvestment
-                                ? Colors.blue
+                            color: transaction.amount >= 0
+                                ? Colors.green
                                 : Colors.red,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

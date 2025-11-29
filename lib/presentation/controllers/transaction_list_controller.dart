@@ -20,6 +20,7 @@ class TransactionListController extends _$TransactionListController {
     String? emotionalTag,
     bool isInvestment = false,
     String? note,
+    String type = 'expense',
   }) async {
     await ref
         .read(transactionRepositoryProvider)
@@ -32,7 +33,14 @@ class TransactionListController extends _$TransactionListController {
           emotionalTag: emotionalTag,
           isInvestment: isInvestment,
           note: note,
+          type: type,
         );
+  }
+
+  Future<void> updateTransaction(Transaction transaction) async {
+    await ref
+        .read(transactionRepositoryProvider)
+        .updateTransaction(transaction);
   }
 
   Future<void> deleteTransaction(int id) async {

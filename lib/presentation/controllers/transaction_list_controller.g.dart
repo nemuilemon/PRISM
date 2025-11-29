@@ -35,7 +35,7 @@ final class TransactionListControllerProvider
 }
 
 String _$transactionListControllerHash() =>
-    r'6549321054b7d9f82da6ea63304f07a970d695db';
+    r'60e7e9bf19b915536ad5986304ed1455a8507107';
 
 abstract class _$TransactionListController
     extends $StreamNotifier<List<Transaction>> {

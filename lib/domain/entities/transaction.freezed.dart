@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Transaction {
 
- int get id; int get accountId; double get amount; DateTime get date; int? get categoryId; int get emotionalScore; String? get emotionalTag; bool get isInvestment; String? get note;
+ int get id; int get accountId; double get amount; DateTime get date; int? get categoryId; int get emotionalScore; String? get emotionalTag; bool get isInvestment; String? get note; String get type;
 /// Create a copy of Transaction
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TransactionCopyWith<Transaction> get copyWith => _$TransactionCopyWithImpl<Tran
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Transaction&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.date, date) || other.date == date)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.emotionalScore, emotionalScore) || other.emotionalScore == emotionalScore)&&(identical(other.emotionalTag, emotionalTag) || other.emotionalTag == emotionalTag)&&(identical(other.isInvestment, isInvestment) || other.isInvestment == isInvestment)&&(identical(other.note, note) || other.note == note));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Transaction&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.date, date) || other.date == date)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.emotionalScore, emotionalScore) || other.emotionalScore == emotionalScore)&&(identical(other.emotionalTag, emotionalTag) || other.emotionalTag == emotionalTag)&&(identical(other.isInvestment, isInvestment) || other.isInvestment == isInvestment)&&(identical(other.note, note) || other.note == note)&&(identical(other.type, type) || other.type == type));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,amount,date,categoryId,emotionalScore,emotionalTag,isInvestment,note);
+int get hashCode => Object.hash(runtimeType,id,accountId,amount,date,categoryId,emotionalScore,emotionalTag,isInvestment,note,type);
 
 @override
 String toString() {
-  return 'Transaction(id: $id, accountId: $accountId, amount: $amount, date: $date, categoryId: $categoryId, emotionalScore: $emotionalScore, emotionalTag: $emotionalTag, isInvestment: $isInvestment, note: $note)';
+  return 'Transaction(id: $id, accountId: $accountId, amount: $amount, date: $date, categoryId: $categoryId, emotionalScore: $emotionalScore, emotionalTag: $emotionalTag, isInvestment: $isInvestment, note: $note, type: $type)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TransactionCopyWith<$Res>  {
   factory $TransactionCopyWith(Transaction value, $Res Function(Transaction) _then) = _$TransactionCopyWithImpl;
 @useResult
 $Res call({
- int id, int accountId, double amount, DateTime date, int? categoryId, int emotionalScore, String? emotionalTag, bool isInvestment, String? note
+ int id, int accountId, double amount, DateTime date, int? categoryId, int emotionalScore, String? emotionalTag, bool isInvestment, String? note, String type
 });
 
 
@@ -62,7 +62,7 @@ class _$TransactionCopyWithImpl<$Res>
 
 /// Create a copy of Transaction
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? accountId = null,Object? amount = null,Object? date = null,Object? categoryId = freezed,Object? emotionalScore = null,Object? emotionalTag = freezed,Object? isInvestment = null,Object? note = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? accountId = null,Object? amount = null,Object? date = null,Object? categoryId = freezed,Object? emotionalScore = null,Object? emotionalTag = freezed,Object? isInvestment = null,Object? note = freezed,Object? type = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,accountId: null == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as int?,emotionalScore: null == emotionalScore ? _self.emotionalScore : emotiona
 as int,emotionalTag: freezed == emotionalTag ? _self.emotionalTag : emotionalTag // ignore: cast_nullable_to_non_nullable
 as String?,isInvestment: null == isInvestment ? _self.isInvestment : isInvestment // ignore: cast_nullable_to_non_nullable
 as bool,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int accountId,  double amount,  DateTime date,  int? categoryId,  int emotionalScore,  String? emotionalTag,  bool isInvestment,  String? note)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int accountId,  double amount,  DateTime date,  int? categoryId,  int emotionalScore,  String? emotionalTag,  bool isInvestment,  String? note,  String type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Transaction() when $default != null:
-return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryId,_that.emotionalScore,_that.emotionalTag,_that.isInvestment,_that.note);case _:
+return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryId,_that.emotionalScore,_that.emotionalTag,_that.isInvestment,_that.note,_that.type);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryI
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int accountId,  double amount,  DateTime date,  int? categoryId,  int emotionalScore,  String? emotionalTag,  bool isInvestment,  String? note)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int accountId,  double amount,  DateTime date,  int? categoryId,  int emotionalScore,  String? emotionalTag,  bool isInvestment,  String? note,  String type)  $default,) {final _that = this;
 switch (_that) {
 case _Transaction():
-return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryId,_that.emotionalScore,_that.emotionalTag,_that.isInvestment,_that.note);case _:
+return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryId,_that.emotionalScore,_that.emotionalTag,_that.isInvestment,_that.note,_that.type);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryI
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int accountId,  double amount,  DateTime date,  int? categoryId,  int emotionalScore,  String? emotionalTag,  bool isInvestment,  String? note)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int accountId,  double amount,  DateTime date,  int? categoryId,  int emotionalScore,  String? emotionalTag,  bool isInvestment,  String? note,  String type)?  $default,) {final _that = this;
 switch (_that) {
 case _Transaction() when $default != null:
-return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryId,_that.emotionalScore,_that.emotionalTag,_that.isInvestment,_that.note);case _:
+return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryId,_that.emotionalScore,_that.emotionalTag,_that.isInvestment,_that.note,_that.type);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.id,_that.accountId,_that.amount,_that.date,_that.categoryI
 
 
 class _Transaction implements Transaction {
-  const _Transaction({required this.id, required this.accountId, required this.amount, required this.date, this.categoryId, this.emotionalScore = 0, this.emotionalTag, this.isInvestment = false, this.note});
+  const _Transaction({required this.id, required this.accountId, required this.amount, required this.date, this.categoryId, this.emotionalScore = 0, this.emotionalTag, this.isInvestment = false, this.note, this.type = 'expense'});
   
 
 @override final  int id;
@@ -226,6 +227,7 @@ class _Transaction implements Transaction {
 @override final  String? emotionalTag;
 @override@JsonKey() final  bool isInvestment;
 @override final  String? note;
+@override@JsonKey() final  String type;
 
 /// Create a copy of Transaction
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +239,16 @@ _$TransactionCopyWith<_Transaction> get copyWith => __$TransactionCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Transaction&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.date, date) || other.date == date)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.emotionalScore, emotionalScore) || other.emotionalScore == emotionalScore)&&(identical(other.emotionalTag, emotionalTag) || other.emotionalTag == emotionalTag)&&(identical(other.isInvestment, isInvestment) || other.isInvestment == isInvestment)&&(identical(other.note, note) || other.note == note));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Transaction&&(identical(other.id, id) || other.id == id)&&(identical(other.accountId, accountId) || other.accountId == accountId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.date, date) || other.date == date)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.emotionalScore, emotionalScore) || other.emotionalScore == emotionalScore)&&(identical(other.emotionalTag, emotionalTag) || other.emotionalTag == emotionalTag)&&(identical(other.isInvestment, isInvestment) || other.isInvestment == isInvestment)&&(identical(other.note, note) || other.note == note)&&(identical(other.type, type) || other.type == type));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,accountId,amount,date,categoryId,emotionalScore,emotionalTag,isInvestment,note);
+int get hashCode => Object.hash(runtimeType,id,accountId,amount,date,categoryId,emotionalScore,emotionalTag,isInvestment,note,type);
 
 @override
 String toString() {
-  return 'Transaction(id: $id, accountId: $accountId, amount: $amount, date: $date, categoryId: $categoryId, emotionalScore: $emotionalScore, emotionalTag: $emotionalTag, isInvestment: $isInvestment, note: $note)';
+  return 'Transaction(id: $id, accountId: $accountId, amount: $amount, date: $date, categoryId: $categoryId, emotionalScore: $emotionalScore, emotionalTag: $emotionalTag, isInvestment: $isInvestment, note: $note, type: $type)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$TransactionCopyWith<$Res> implements $TransactionCopyWith
   factory _$TransactionCopyWith(_Transaction value, $Res Function(_Transaction) _then) = __$TransactionCopyWithImpl;
 @override @useResult
 $Res call({
- int id, int accountId, double amount, DateTime date, int? categoryId, int emotionalScore, String? emotionalTag, bool isInvestment, String? note
+ int id, int accountId, double amount, DateTime date, int? categoryId, int emotionalScore, String? emotionalTag, bool isInvestment, String? note, String type
 });
 
 
@@ -274,7 +276,7 @@ class __$TransactionCopyWithImpl<$Res>
 
 /// Create a copy of Transaction
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? accountId = null,Object? amount = null,Object? date = null,Object? categoryId = freezed,Object? emotionalScore = null,Object? emotionalTag = freezed,Object? isInvestment = null,Object? note = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? accountId = null,Object? amount = null,Object? date = null,Object? categoryId = freezed,Object? emotionalScore = null,Object? emotionalTag = freezed,Object? isInvestment = null,Object? note = freezed,Object? type = null,}) {
   return _then(_Transaction(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,accountId: null == accountId ? _self.accountId : accountId // ignore: cast_nullable_to_non_nullable
@@ -285,7 +287,8 @@ as int?,emotionalScore: null == emotionalScore ? _self.emotionalScore : emotiona
 as int,emotionalTag: freezed == emotionalTag ? _self.emotionalTag : emotionalTag // ignore: cast_nullable_to_non_nullable
 as String?,isInvestment: null == isInvestment ? _self.isInvestment : isInvestment // ignore: cast_nullable_to_non_nullable
 as bool,note: freezed == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

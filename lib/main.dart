@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'data/datasources/local/app_database.dart';
 import 'core/theme/app_theme.dart';
+import 'presentation/pages/dashboard/dashboard_page.dart';
 import 'presentation/pages/account_list_page.dart';
 import 'presentation/pages/transaction/transaction_list_page.dart';
+import 'presentation/pages/settings/settings_page.dart';
 
 part 'main.g.dart';
 
@@ -31,12 +33,20 @@ class LifeAssetApp extends ConsumerStatefulWidget {
 }
 
 class _LifeAssetAppState extends ConsumerState<LifeAssetApp> {
-  int _currentIndex = 0;
+  int _selectedIndex = 0;
 
   final List<Widget> _pages = [
+    const DashboardPage(),
     const TransactionListPage(),
     const AccountListPage(),
+    const SettingsPage(),
   ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,27 +54,32 @@ class _LifeAssetAppState extends ConsumerState<LifeAssetApp> {
       title: 'Life Asset Manager',
       theme: AppTheme.lightTheme,
       home: Scaffold(
-        body: _pages[_currentIndex],
+        body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
           items: const [
             BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard),
+              label: 'ダッシュボード',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.list),
-              label: '取引一覧',
+              label: '取引',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_balance_wallet),
-              label: '口座一覧',
+              label: '口座',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: '設定',
             ),
           ],
           backgroundColor: AppTheme.baseColor,
           selectedItemColor: AppTheme.accentColor,
-          unselectedItemColor: AppTheme.textColor.withValues(alpha: 0.5),
+          unselectedItemColor: Colors.grey,
+          type: BottomNavigationBarType.fixed,
         ),
       ),
     );

@@ -24,3 +24,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+anc_ae_kakeibo_export.csv
