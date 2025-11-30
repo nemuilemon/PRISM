@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/domain/entities/category.dart';
 import 'package:prism/presentation/controllers/category_list_controller.dart';
-import 'package:prism/presentation/widgets/neumorphism/neumorphic_button.dart';
+
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class CategoryListPage extends ConsumerWidget {
@@ -77,12 +77,10 @@ class CategoryListPage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
-      floatingActionButton: NeumorphicButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _showCategoryDialog(context, ref, null),
-        child: const Padding(
-          padding: EdgeInsets.all(16),
-          child: Icon(Icons.add, color: AppTheme.accentColor),
-        ),
+        backgroundColor: AppTheme.baseColor,
+        child: const Icon(Icons.add, color: AppTheme.accentColor),
       ),
     );
   }

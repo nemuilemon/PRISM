@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/services/import_export_service.dart';
 import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/data/repositories/account_repository.dart';
 import 'package:prism/data/repositories/category_repository_impl.dart';
 import 'package:prism/data/repositories/transaction_repository_impl.dart';
 import 'package:prism/presentation/pages/settings/category_list_page.dart';
@@ -64,16 +65,80 @@ class SettingsPage extends ConsumerWidget {
                         transactionRepositoryProvider,
                       );
                       final categoryRepo = ref.read(categoryRepositoryProvider);
+                      final accountRepo = ref.read(accountRepositoryProvider);
                       final service = ImportExportService(
                         transactionRepo,
                         categoryRepo,
+                        accountRepo,
                       );
 
                       try {
-                        await service.importFromCsv();
-                        if (context.mounted) {
+                        final result = await service.importFromCsv();
+                        if (!context.mounted) return;
+
+                        if (result == null) {
+                          return;
+                        }
+
+                        if (result.successCount > 0 &&
+                            result.failureCount == 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('インポートが完了しました')),
+                            SnackBar(
+                              content: Text(
+                                '${result.successCount}件のインポートが完了しました',
+                              ),
+                            ),
+                          );
+                        } else if (result.successCount == 0 &&
+                            result.failureCount == 0 &&
+                            result.errors.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('インポートするデータが見つかりませんでした'),
+                            ),
+                          );
+                        } else {
+                          showDialog<void>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('インポート結果'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('成功: ${result.successCount}件'),
+                                    Text(
+                                      '失敗: ${result.failureCount}件',
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    if (result.errors.isNotEmpty) ...[
+                                      const SizedBox(height: 8),
+                                      const Text('エラー詳細 (最初の5件):'),
+                                      ...result.errors
+                                          .take(5)
+                                          .map(
+                                            (e) => Text(
+                                              e,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
                           );
                         }
                       } on Exception catch (e) {
@@ -97,9 +162,11 @@ class SettingsPage extends ConsumerWidget {
                         transactionRepositoryProvider,
                       );
                       final categoryRepo = ref.read(categoryRepositoryProvider);
+                      final accountRepo = ref.read(accountRepositoryProvider);
                       final service = ImportExportService(
                         transactionRepo,
                         categoryRepo,
+                        accountRepo,
                       );
 
                       try {

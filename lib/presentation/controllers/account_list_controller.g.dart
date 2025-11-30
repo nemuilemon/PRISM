@@ -34,7 +34,7 @@ final class AccountListControllerProvider
 }
 
 String _$accountListControllerHash() =>
-    r'b2c2ce6d33bf9f02c77c8e529c06331739dc1500';
+    r'40036a15a5ac3db5f9b26f1399f5ca6cbfb95523';
 
 abstract class _$AccountListController extends $StreamNotifier<List<Asset>> {
   Stream<List<Asset>> build();
