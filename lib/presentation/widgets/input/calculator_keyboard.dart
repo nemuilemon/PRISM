@@ -73,7 +73,7 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       color: AppTheme.baseColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -129,11 +129,11 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
                     onPressed: widget.onSubmit,
                     child: const Center(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           'OK',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.accentColor,
                           ),
@@ -158,11 +158,13 @@ class _CalculatorKeyboardState extends State<CalculatorKeyboard> {
           onPressed: onPressed ?? () => _onKeyPressed(text),
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8), // 12 -> 8 に縮小
+              padding: const EdgeInsets.symmetric(
+                vertical: 4,
+              ), // 12 -> 8 -> 4 に縮小
               child: Text(
                 text,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: color ?? AppTheme.textColor,
                 ),

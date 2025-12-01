@@ -170,8 +170,8 @@ class SettingsPage extends ConsumerWidget {
                       );
 
                       try {
-                        await service.exportToCsv();
-                        if (context.mounted) {
+                        final success = await service.exportToCsv();
+                        if (context.mounted && success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('エクスポートが完了しました')),
                           );

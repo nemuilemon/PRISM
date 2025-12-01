@@ -33,7 +33,7 @@ class ImportExportService {
   final CategoryRepository _categoryRepository;
   final AccountRepository _accountRepository;
 
-  Future<void> exportToCsv() async {
+  Future<bool> exportToCsv() async {
     final transactions = await _transactionRepository.getTransactions();
 
     final rows = <List<dynamic>>[
@@ -63,13 +63,32 @@ class ImportExportService {
     }
 
     final csv = const ListToCsvConverter().convert(rows);
-    final directory = await getApplicationDocumentsDirectory();
-    final path =
-        '${directory.path}/prism_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
-    final file = File(path);
-    await file.writeAsString(csv);
 
-    await Share.shareXFiles([XFile(path)], text: 'PRISM Export Data');
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      final outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: '保存先を選択してください',
+        fileName:
+            'prism_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv',
+        allowedExtensions: ['csv'],
+        type: FileType.custom,
+      );
+
+      if (outputFile != null) {
+        final file = File(outputFile);
+        await file.writeAsString(csv);
+        return true;
+      }
+      return false;
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      final path =
+          '${directory.path}/prism_export_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.csv';
+      final file = File(path);
+      await file.writeAsString(csv);
+
+      await Share.shareXFiles([XFile(path)], text: 'PRISM Export Data');
+      return true;
+    }
   }
 
   Future<ImportResult?> importFromCsv() async {
