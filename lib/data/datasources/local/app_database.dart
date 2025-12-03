@@ -2,10 +2,17 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_database.g.dart';
+
+@Riverpod(keepAlive: true)
+AppDatabase appDatabase(Ref ref) {
+  return AppDatabase();
+}
 
 // 報告書 3.2.1 アカウント（資産元）テーブル
 class Accounts extends Table {

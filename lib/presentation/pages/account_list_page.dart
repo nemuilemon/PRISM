@@ -34,9 +34,9 @@ class AccountListPage extends ConsumerWidget {
                   child: ListTile(
                     title: Text(
                       switch (asset) {
-                        FinancialAsset a => a.name,
-                        PointAsset a => a.providerName,
-                        ExperienceAsset a => a.activityName,
+                        final FinancialAsset a => a.name,
+                        final PointAsset a => a.providerName,
+                        final ExperienceAsset a => a.activityName,
                       },
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
@@ -44,11 +44,11 @@ class AccountListPage extends ConsumerWidget {
                       ),
                     ),
                     subtitle: switch (asset) {
-                      FinancialAsset a => Text(
+                      final FinancialAsset a => Text(
                         'Financial - ${a.currency} : ${a.amount}',
                       ),
-                      PointAsset a => Text('Point - ${a.points}pt'),
-                      ExperienceAsset a => Text(
+                      final PointAsset a => Text('Point - ${a.points}pt'),
+                      final ExperienceAsset a => Text(
                         'Experience - Lv.${a.accumulatedLevel}',
                       ),
                     },

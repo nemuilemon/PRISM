@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
-import 'package:prism/data/datasources/local/app_database.dart';
 import 'package:prism/presentation/pages/account_list_page.dart';
 import 'package:prism/presentation/pages/dashboard/dashboard_page.dart';
 import 'package:prism/presentation/pages/settings/settings_page.dart';
 import 'package:prism/presentation/pages/transaction/transaction_list_page.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'main.g.dart';
 
 // データベースインスタンスのプロバイダー (報告書 2.2 DI戦略)
-@Riverpod(keepAlive: true)
-AppDatabase appDatabase(Ref ref) {
-  return AppDatabase();
-}
+// Moved to lib/data/datasources/local/app_database.dart
 
 void main() {
   runApp(

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:prism/presentation/controllers/account_list_controller.dart';
-import 'package:prism/presentation/controllers/transaction_list_controller.dart';
-import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
-import 'package:prism/presentation/widgets/charts/investment_trend_chart.dart';
-import 'package:prism/presentation/widgets/charts/emotion_scatter_chart.dart';
 import 'package:prism/domain/entities/asset.dart';
 import 'package:prism/domain/entities/transaction.dart';
+import 'package:prism/presentation/controllers/account_list_controller.dart';
+import 'package:prism/presentation/controllers/transaction_list_controller.dart';
+import 'package:prism/presentation/widgets/charts/emotion_scatter_chart.dart';
+import 'package:prism/presentation/widgets/charts/investment_trend_chart.dart';
+import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -30,13 +30,13 @@ class DashboardPage extends ConsumerWidget {
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -61,7 +61,7 @@ class DashboardPage extends ConsumerWidget {
               child: transactionsAsync.when(
                 data: (data) => InvestmentTrendChart(transactions: data),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const SizedBox(),
+                error: (error, stack) => const SizedBox(),
               ),
             ),
             const SizedBox(height: 24),
@@ -78,7 +78,7 @@ class DashboardPage extends ConsumerWidget {
               child: transactionsAsync.when(
                 data: (data) => EmotionScatterChart(transactions: data),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => const SizedBox(),
+                error: (error, stack) => const SizedBox(),
               ),
             ),
             const SizedBox(height: 24),
@@ -122,7 +122,7 @@ class DashboardPage extends ConsumerWidget {
             data: (assets) {
               // 金融資産とポイントを合算（簡易）
               double total = 0;
-              for (var asset in assets) {
+              for (final asset in assets) {
                 asset.map(
                   financial: (a) => total += a.amount,
                   point: (a) => total += a.points * a.exchangeRate,
@@ -176,7 +176,7 @@ class DashboardPage extends ConsumerWidget {
                           t.isInvestment,
                     );
                     final total = thisMonth.fold<double>(
-                      0.0,
+                      0,
                       (sum, t) => sum + t.amount,
                     );
                     return Text(
@@ -188,7 +188,7 @@ class DashboardPage extends ConsumerWidget {
                     );
                   },
                   loading: () => const Text('...'),
-                  error: (_, __) => const Text('-'),
+                  error: (error, stack) => const Text('-'),
                 ),
               ],
             ),
@@ -225,7 +225,7 @@ class DashboardPage extends ConsumerWidget {
                     );
                   },
                   loading: () => const Text('...'),
-                  error: (_, __) => const Text('-'),
+                  error: (error, stack) => const Text('-'),
                 ),
               ],
             ),
@@ -253,7 +253,7 @@ class DashboardPage extends ConsumerWidget {
         return Column(
           children: top5.map((t) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
+              padding: const EdgeInsets.only(bottom: 12),
               child: NeumorphicContainer(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -282,7 +282,7 @@ class DashboardPage extends ConsumerWidget {
                       children: [
                         if (t.isInvestment)
                           const Padding(
-                            padding: EdgeInsets.only(right: 8.0),
+                            padding: EdgeInsets.only(right: 8),
                             child: Icon(
                               Icons.star,
                               size: 16,

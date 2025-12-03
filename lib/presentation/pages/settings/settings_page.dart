@@ -98,7 +98,7 @@ class SettingsPage extends ConsumerWidget {
                             ),
                           );
                         } else {
-                          showDialog<void>(
+                          await showDialog<void>(
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('インポート結果'),
@@ -181,6 +181,71 @@ class SettingsPage extends ConsumerWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('エクスポートエラー: $e')),
                           );
+                        }
+                      }
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.delete_forever,
+                      color: Colors.red,
+                    ),
+                    title: const Text(
+                      'データを全削除',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('データの削除'),
+                          content: const Text(
+                            'すべての取引データを削除します。\nこの操作は取り消せません。\n本当によろしいですか？',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('キャンセル'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              child: const Text('削除'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if ((confirmed ?? false) && context.mounted) {
+                        final transactionRepo = ref.read(
+                          transactionRepositoryProvider,
+                        );
+                        final categoryRepo = ref.read(
+                          categoryRepositoryProvider,
+                        );
+                        final accountRepo = ref.read(accountRepositoryProvider);
+                        final service = ImportExportService(
+                          transactionRepo,
+                          categoryRepo,
+                          accountRepo,
+                        );
+
+                        try {
+                          await service.deleteAllData();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('データを削除しました')),
+                            );
+                          }
+                        } on Exception catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('削除エラー: $e')),
+                            );
+                          }
                         }
                       }
                     },

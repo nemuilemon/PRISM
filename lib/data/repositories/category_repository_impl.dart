@@ -2,14 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:prism/data/datasources/local/app_database.dart' as db;
 import 'package:prism/domain/entities/category.dart' as domain;
 import 'package:prism/domain/repositories/category_repository.dart';
-import 'package:prism/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'category_repository_impl.g.dart';
 
 @Riverpod(keepAlive: true)
 CategoryRepository categoryRepository(Ref ref) {
-  return CategoryRepositoryImpl(ref.watch(appDatabaseProvider));
+  return CategoryRepositoryImpl(ref.watch(db.appDatabaseProvider));
 }
 
 class CategoryRepositoryImpl implements CategoryRepository {

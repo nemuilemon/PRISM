@@ -2,24 +2,25 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:prism/data/repositories/account_repository.dart';
+import 'package:prism/domain/entities/category.dart';
 import 'package:prism/domain/repositories/category_repository.dart';
 import 'package:prism/domain/repositories/transaction_repository.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ImportResult {
-  final int successCount;
-  final int failureCount;
-  final List<String> errors;
-
   ImportResult({
     required this.successCount,
     required this.failureCount,
     required this.errors,
   });
+
+  final int successCount;
+  final int failureCount;
+  final List<String> errors;
 }
 
 class ImportExportService {
@@ -91,6 +92,13 @@ class ImportExportService {
     }
   }
 
+  Future<void> deleteAllData() async {
+    final transactions = await _transactionRepository.getTransactions();
+    for (final t in transactions) {
+      await _transactionRepository.deleteTransaction(t.id);
+    }
+  }
+
   Future<ImportResult?> importFromCsv() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -105,7 +113,7 @@ class ImportExportService {
     String input;
     try {
       input = await file.readAsString();
-    } catch (e) {
+    } on Exception catch (e) {
       return ImportResult(
         successCount: 0,
         failureCount: 1,
@@ -131,8 +139,8 @@ class ImportExportService {
 
     // デフォルトアカウント（最初のアカウント）
     final defaultAccount = accounts.first;
-    int successCount = 0;
-    int failureCount = 0;
+    var successCount = 0;
+    var failureCount = 0;
     final errors = <String>[];
 
     if (fields.isEmpty) {
@@ -157,19 +165,29 @@ class ImportExportService {
     // ヘッダー行をスキップするために1から開始
     for (var i = 1; i < fields.length; i++) {
       final row = fields[i];
-      if (row.length < 7) {
+      // PRISM export format expects at least 6 columns (Date, AccountID, CategoryID, Note, Amount, Type)
+      if (row.length < 6) {
         failureCount++;
-        errors.add('Line $i: 列数が不足しています (期待: 7, 実際: ${row.length})');
+        errors.add('Line $i: 列数が不足しています (期待: 6+, 実際: ${row.length})');
         continue;
       }
       try {
+        // PRISM Export Format:
+        // 0: Date
+        // 1: Account ID
+        // 2: Category ID
+        // 3: Note
+        // 4: Amount
+        // 5: Type
+        // 6: Emotional Score
+        // 7: Self Investment
+
         final dateStr = row[0].toString();
-        // final accountName = row[1].toString(); // 口座名からID解決が必要
-        final categoryName = row[2].toString();
-        // subCategory = row[3]
-        final note = row[4].toString();
-        final amountStr = row[5].toString();
-        final typeStr = row[6].toString(); // 収入/支出
+        // final accountIdStr = row[1].toString();
+        final categoryIdStr = row[2].toString();
+        final note = row[3].toString();
+        final amountStr = row[4].toString();
+        final typeStr = row[5].toString();
 
         // 日付解析 (複数のフォーマットを試行)
         DateTime? date;
@@ -194,25 +212,62 @@ class ImportExportService {
         final amount = double.tryParse(amountStr) ?? 0.0;
 
         // タイプ判定
-        final type = typeStr == '収入' ? 'income' : 'expense';
+        final type = typeStr == 'income' || typeStr == '収入'
+            ? 'income'
+            : 'expense';
         final finalAmount = type == 'expense' ? -amount.abs() : amount.abs();
 
         // カテゴリ解決
         int? categoryId;
-        try {
-          final category = categories.firstWhere(
-            (c) => c.name == categoryName,
-            orElse: () => categories.firstWhere((c) => c.name == 'その他'),
-          );
-          categoryId = category.id;
-        } catch (e) {
-          // 'その他' も見つからない場合
-          throw Exception('カテゴリが見つかりません: $categoryName');
+
+        // IDでの検索を試みる
+        final parsedCategoryId = int.tryParse(categoryIdStr);
+        if (parsedCategoryId != null) {
+          if (categories.any((c) => c.id == parsedCategoryId)) {
+            categoryId = parsedCategoryId;
+          }
+        }
+
+        // IDで見つからない、またはIDでない場合は名前で検索
+        if (categoryId == null) {
+          Category? category;
+          try {
+            category = categories.firstWhere((c) => c.name == categoryIdStr);
+          } catch (_) {
+            try {
+              category = categories.firstWhere((c) => c.name == 'その他');
+            } catch (_) {
+              // Ignore
+            }
+          }
+
+          if (category != null) {
+            categoryId = category.id;
+          } else {
+            // 'その他' も見つからない場合
+            // 最後の手段として最初のカテゴリを使用、またはエラー
+            if (categories.isNotEmpty) {
+              categoryId = categories.first.id;
+            } else {
+              throw Exception('カテゴリが見つかりません: $categoryIdStr');
+            }
+          }
         }
 
         // 口座解決 (名前マッチング実装推奨だが、一旦デフォルト)
-        // TODO: 名前でマッチング
+        // TODO(user): 名前でマッチング
         final accountId = defaultAccount.id;
+
+        // 感情スコアと自己投資フラグ（もしあれば）
+        var emotionalScore = 0;
+        var isInvestment = false;
+        if (row.length > 6) {
+          emotionalScore = int.tryParse(row[6].toString()) ?? 0;
+        }
+        if (row.length > 7) {
+          final invStr = row[7].toString();
+          isInvestment = invStr == 'Yes' || invStr == 'true';
+        }
 
         await _transactionRepository.addTransaction(
           accountId: accountId,
@@ -221,9 +276,11 @@ class ImportExportService {
           categoryId: categoryId,
           note: note,
           type: type,
+          emotionalScore: emotionalScore,
+          isInvestment: isInvestment,
         );
         successCount++;
-      } catch (e) {
+      } on Exception catch (e) {
         failureCount++;
         errors.add('Line $i: $e');
         debugPrint('Import error at line $i: $e');

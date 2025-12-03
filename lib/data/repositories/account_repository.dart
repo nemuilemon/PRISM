@@ -1,15 +1,13 @@
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/data/datasources/local/app_database.dart' as db;
 import 'package:prism/domain/entities/asset.dart';
-import 'package:prism/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'account_repository.g.dart';
 
 @Riverpod(keepAlive: true)
 AccountRepository accountRepository(Ref ref) {
-  return AccountRepository(ref.watch(appDatabaseProvider));
+  return AccountRepository(ref.watch(db.appDatabaseProvider));
 }
 
 class AccountRepository {

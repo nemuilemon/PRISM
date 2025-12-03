@@ -2,14 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:prism/data/datasources/local/app_database.dart' as db;
 import 'package:prism/domain/entities/transaction.dart' as domain;
 import 'package:prism/domain/repositories/transaction_repository.dart';
-import 'package:prism/main.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'transaction_repository_impl.g.dart';
 
 @Riverpod(keepAlive: true)
 TransactionRepository transactionRepository(Ref ref) {
-  return TransactionRepositoryImpl(ref.watch(appDatabaseProvider));
+  return TransactionRepositoryImpl(ref.watch(db.appDatabaseProvider));
 }
 
 class TransactionRepositoryImpl implements TransactionRepository {
