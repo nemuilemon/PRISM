@@ -108,25 +108,25 @@ class CategoryListPage extends ConsumerWidget {
                     decoration: const InputDecoration(labelText: 'カテゴリ名'),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RadioListTile<String>(
-                          title: const Text('支出'),
-                          value: 'expense',
-                          groupValue: type,
-                          onChanged: (value) => setState(() => type = value!),
+                  RadioGroup<String>(
+                    groupValue: type,
+                    onChanged: (value) => setState(() => type = value!),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('支出'),
+                            value: 'expense',
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: RadioListTile<String>(
-                          title: const Text('収入'),
-                          value: 'income',
-                          groupValue: type,
-                          onChanged: (value) => setState(() => type = value!),
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('収入'),
+                            value: 'income',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

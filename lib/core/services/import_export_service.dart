@@ -202,7 +202,7 @@ class ImportExportService {
           try {
             date = fmt.parse(dateStr);
             break;
-          } catch (_) {}
+          } on FormatException catch (_) {}
         }
 
         if (date == null) {
@@ -233,10 +233,10 @@ class ImportExportService {
           Category? category;
           try {
             category = categories.firstWhere((c) => c.name == categoryIdStr);
-          } catch (_) {
+          } on StateError catch (_) {
             try {
               category = categories.firstWhere((c) => c.name == 'その他');
-            } catch (_) {
+            } on StateError catch (_) {
               // Ignore
             }
           }

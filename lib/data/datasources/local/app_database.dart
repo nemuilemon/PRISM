@@ -75,6 +75,18 @@ class Categories extends Table {
       text().withDefault(const Constant('expense'))(); // income, expense
 }
 
+// 定期支出（固定費）テーブル
+class RecurringTransactions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get accountId => integer().references(Accounts, #id)();
+  RealColumn get amount => real()();
+  IntColumn get categoryId => integer().nullable()();
+  IntColumn get dayOfMonth => integer()(); // 1-31
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  TextColumn get note => text().nullable()();
+  TextColumn get type => text().withDefault(const Constant('expense'))();
+}
+
 @DriftDatabase(
   tables: [
     Accounts,
@@ -83,13 +95,14 @@ class Categories extends Table {
     TransactionTags,
     ExchangeRates,
     Categories,
+    RecurringTransactions,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -152,6 +165,9 @@ class AppDatabase extends _$AppDatabase {
             ),
           ]);
         });
+      }
+      if (from < 6) {
+        await m.createTable(recurringTransactions);
       }
     },
   );

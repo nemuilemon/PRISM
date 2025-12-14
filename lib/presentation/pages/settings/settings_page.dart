@@ -6,6 +6,7 @@ import 'package:prism/data/repositories/account_repository.dart';
 import 'package:prism/data/repositories/category_repository_impl.dart';
 import 'package:prism/data/repositories/transaction_repository_impl.dart';
 import 'package:prism/presentation/pages/settings/category_list_page.dart';
+import 'package:prism/presentation/pages/settings/recurring/recurring_transaction_list_page.dart';
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -48,6 +49,23 @@ class SettingsPage extends ConsumerWidget {
                         context,
                         MaterialPageRoute<void>(
                           builder: (context) => const CategoryListPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.repeat,
+                      color: AppTheme.accentColor,
+                    ),
+                    title: const Text('定期支出(固定費)設定'),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) =>
+                              const RecurringTransactionListPage(),
                         ),
                       );
                     },

@@ -1,16 +1,17 @@
-import 'dart:io';
+// ignore_for_file: avoid_print
 import 'dart:convert';
+import 'dart:io';
 
-void main() async {
+void main() {
   final path = r'c:\Projects\prism\anc_ae_kakeibo_export.csv';
   final file = File(path);
 
-  if (!await file.exists()) {
+  if (!file.existsSync()) {
     print('File not found: $path');
     return;
   }
 
-  final bytes = await file.readAsBytes();
+  final bytes = file.readAsBytesSync();
   print('File size: ${bytes.length} bytes');
   print('First 20 bytes: ${bytes.take(20).toList()}');
 
@@ -18,7 +19,7 @@ void main() async {
     final text = utf8.decode(bytes);
     print('UTF-8 decode success. Length: ${text.length}');
     print('First 100 chars: ${text.substring(0, 100)}');
-  } catch (e) {
+  } on FormatException catch (e) {
     print('UTF-8 decode failed: $e');
   }
 }

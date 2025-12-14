@@ -6,7 +6,7 @@ import 'package:prism/domain/entities/category.dart';
 import 'package:prism/presentation/controllers/category_list_controller.dart';
 import 'package:prism/presentation/controllers/transaction_list_controller.dart';
 import 'package:prism/presentation/pages/transaction/add_transaction_page.dart';
-import 'package:prism/presentation/widgets/neumorphism/neumorphic_button.dart';
+
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class TransactionListPage extends ConsumerWidget {
@@ -155,21 +155,15 @@ class TransactionListPage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),
-      floatingActionButton: SizedBox(
-        width: 60,
-        height: 60,
-        child: NeumorphicButton(
-          padding: EdgeInsets.zero,
-          borderRadius: 30,
-          onPressed: () async {
-            await Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => const AddTransactionPage(),
-              ),
-            );
-          },
-          child: const Icon(Icons.add, color: AppTheme.accentColor, size: 30),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) => const AddTransactionPage(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

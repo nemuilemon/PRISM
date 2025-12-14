@@ -4,9 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:prism/domain/entities/asset.dart';
 import 'package:prism/domain/entities/transaction.dart';
 import 'package:prism/presentation/controllers/account_list_controller.dart';
+import 'package:prism/presentation/controllers/category_list_controller.dart';
 import 'package:prism/presentation/controllers/transaction_list_controller.dart';
 import 'package:prism/presentation/widgets/charts/emotion_scatter_chart.dart';
-import 'package:prism/presentation/widgets/charts/investment_trend_chart.dart';
+import 'package:prism/presentation/widgets/expenses/monthly_category_table.dart';
 import 'package:prism/presentation/widgets/neumorphism/neumorphic_container.dart';
 
 class DashboardPage extends ConsumerWidget {
@@ -16,6 +17,7 @@ class DashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final assetsAsync = ref.watch(accountListControllerProvider);
     final transactionsAsync = ref.watch(transactionListControllerProvider);
+    final categoriesAsync = ref.watch(categoryListControllerProvider);
 
     final currencyFormatter = NumberFormat.currency(
       locale: 'ja_JP',
@@ -50,19 +52,29 @@ class DashboardPage extends ConsumerWidget {
 
             // チャートセクション
             Text(
-              'Investment Trend',
+              'Monthly Expenses',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
-            SizedBox(
-              height: 200,
-              child: transactionsAsync.when(
-                data: (data) => InvestmentTrendChart(transactions: data),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => const SizedBox(),
+            transactionsAsync.when(
+              data: (transactions) => categoriesAsync.when(
+                data: (categories) => MonthlyCategoryTable(
+                  transactions: transactions,
+                  categories: categories,
+                ),
+                loading: () => const SizedBox(
+                  height: 200,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (_, __) => const SizedBox(),
               ),
+              loading: () => const SizedBox(
+                height: 200,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (error, stack) => const SizedBox(),
             ),
             const SizedBox(height: 24),
 
@@ -177,7 +189,7 @@ class DashboardPage extends ConsumerWidget {
                     );
                     final total = thisMonth.fold<double>(
                       0,
-                      (sum, t) => sum + t.amount,
+                      (sum, t) => sum + t.amount.abs(),
                     );
                     return Text(
                       formatter.format(total),

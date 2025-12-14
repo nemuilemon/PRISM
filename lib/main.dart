@@ -9,6 +9,8 @@ import 'package:prism/presentation/pages/transaction/transaction_list_page.dart'
 // データベースインスタンスのプロバイダー (報告書 2.2 DI戦略)
 // Moved to lib/data/datasources/local/app_database.dart
 
+import 'package:prism/core/services/recurring_transaction_service.dart';
+
 void main() {
   runApp(
     // ProviderScopeでアプリ全体をラップ
@@ -27,6 +29,18 @@ class LifeAssetApp extends ConsumerStatefulWidget {
 
 class _LifeAssetAppState extends ConsumerState<LifeAssetApp> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check recurring transactions on startup
+    // We use addPostFrameCallback or just call it directly.
+    // Since it's async and doesn't affect build directly, calling it here is fine,
+    // but reading provider in initState requires `ref.read`.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(recurringTransactionServiceProvider).checkAndProcess();
+    });
+  }
 
   final List<Widget> _pages = [
     const DashboardPage(),
